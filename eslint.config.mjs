@@ -30,6 +30,12 @@ const eslintConfig = [
       "react/no-array-index-key": "off",
       "react/require-default-props": "off",
       "react/jsx-props-no-spreading": "off",
+      "prettier/prettier": [
+        "error",
+        {
+          endOfLine: "auto",
+        },
+      ],
     },
   },
 ];
