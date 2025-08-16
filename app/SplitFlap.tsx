@@ -6,12 +6,6 @@ import { twMerge } from "tailwind-merge";
 import { AnimatedFlap } from "@/types";
 import SplitFlapAnimated from "./SplitFlapAnimated";
 
-const classNames = {
-  topFlap: "absolute top-0 h-1/2 origin-bottom overflow-hidden",
-  bottomFlap: "absolute bottom-0 h-1/2 origin-top overflow-hidden",
-  font: "text-[100px] font-bold inline-block",
-};
-
 interface SplitFlapProps extends ComponentProps<"div"> {
   value?: string;
 }
@@ -59,26 +53,45 @@ export default function SplitFlap({
     <div
       aria-label="split flap container"
       className={twMerge(
-        clsx("relative min-h-[100px] w-28 rounded border shadow-md", className),
+        clsx("relative min-h-[100px] w-28 shadow-md", className),
       )}
       {...props}
     >
       <div
         aria-label="split flap static"
         className={twMerge(
-          clsx(
-            "absolute inset-0 z-0 h-full overflow-hidden",
-            animatedFlapQueue[0],
-          ),
+          clsx("absolute inset-0 z-0 h-full", animatedFlapQueue[0]),
         )}
       >
-        <div className={twMerge(clsx(classNames.topFlap))}>
-          <span className={twMerge(clsx(classNames.font))}>
+        <div
+          aria-label="split flap flap"
+          className={twMerge(
+            clsx(
+              "absolute -top-0.5 flex h-1/2 w-full origin-bottom items-center justify-center overflow-hidden rounded bg-slate-900 text-white",
+            ),
+          )}
+        >
+          <span
+            className={twMerge(
+              clsx("inline-block translate-y-1/4 text-[100px] font-bold"),
+            )}
+          >
             {animatedFlapQueue.length ? value : current}
           </span>
         </div>
-        <div className={twMerge(clsx(classNames.bottomFlap))}>
-          <span className={twMerge(clsx(classNames.font, "-translate-y-1/2"))}>
+        <div
+          aria-label="split flap flap"
+          className={twMerge(
+            clsx(
+              "absolute -bottom-0.5 flex h-1/2 w-full origin-top items-center justify-center overflow-hidden rounded bg-slate-900 text-white",
+            ),
+          )}
+        >
+          <span
+            className={twMerge(
+              clsx("inline-block -translate-y-1/4 text-[100px] font-bold"),
+            )}
+          >
             {animatedFlapQueue.length ? prev : current}
           </span>
         </div>
