@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { useCallback, useState } from "react";
+import { ComponentProps, useCallback, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AnimatedFlap } from "@/types";
 import SplitFlapAnimated from "./SplitFlapAnimated";
@@ -12,68 +12,79 @@ const classNames = {
   font: "text-[100px] font-bold inline-block",
 };
 
-export default function SplitFlap({ list }: { list: string[] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const current = list[currentIndex];
-  const next = list[currentIndex + 1] || list[0];
-  const [prev, setPrev] = useState<string | null>(null);
+interface SplitFlapProps extends ComponentProps<"div"> {
+  value?: string;
+}
 
+export default function SplitFlap({
+  className,
+  value = "",
+  ...props
+}: SplitFlapProps) {
+  const [prev, setPrev] = useState<string | null>(null);
+  const [current, setCurrent] = useState<string>("");
   const [animatedFlapQueue, setAnimatedFlapQueue] = useState<AnimatedFlap[]>(
     [],
   );
 
-  const enqueueAnimatedFlap = useCallback((animatedFlap: AnimatedFlap) => {
-    if (!animatedFlap.next) return;
-    setAnimatedFlapQueue((prev) => [...prev, animatedFlap]);
-  }, []);
-
   const dequeueAnimatedFlap = useCallback(() => {
     setAnimatedFlapQueue((prev) => {
       const newQueue = prev.slice(1);
-      setPrev(prev[1]?.current || null);
       return newQueue;
     });
   }, []);
-
-  const handleClick = () => {
-    enqueueAnimatedFlap({ current, next, zIndex: list.length - currentIndex });
-    setCurrentIndex((prev) => (prev + 1 >= list.length ? 0 : prev + 1));
-    if (prev === null) {
-      setPrev(current);
-    }
-  };
 
   const handleAnimationEnd = useCallback(() => {
     dequeueAnimatedFlap();
   }, [dequeueAnimatedFlap]);
 
+  if (value !== current) {
+    setPrev(current);
+    setCurrent(value);
+    setAnimatedFlapQueue((queue) => {
+      const last = queue.slice(-1)[0];
+      return [
+        ...queue,
+        {
+          id: crypto.randomUUID(),
+          current,
+          next: value,
+          zIndex: last?.zIndex ? last.zIndex - 1 : 1000,
+        },
+      ];
+    });
+  }
+
   return (
-    <>
-      <div aria-label="split flap container" className="relative w-28 border">
-        <div
-          aria-label="split flap static"
-          className={twMerge(
-            clsx(
-              "absolute inset-0 z-0 h-full overflow-hidden",
-              animatedFlapQueue[0],
-            ),
-          )}
-        >
-          <div className={twMerge(clsx(classNames.topFlap))}>
-            <span className={twMerge(clsx(classNames.font))}>
-              {animatedFlapQueue.slice(-1)[0]?.next || current}
-            </span>
-          </div>
-          <div className={twMerge(clsx(classNames.bottomFlap))}>
-            <span
-              className={twMerge(clsx(classNames.font, "-translate-y-1/2"))}
-            >
-              {prev || current}
-            </span>
-          </div>
+    <div
+      aria-label="split flap container"
+      className={twMerge(
+        clsx("relative min-h-[100px] w-28 rounded border shadow-md", className),
+      )}
+      {...props}
+    >
+      <div
+        aria-label="split flap static"
+        className={twMerge(
+          clsx(
+            "absolute inset-0 z-0 h-full overflow-hidden",
+            animatedFlapQueue[0],
+          ),
+        )}
+      >
+        <div className={twMerge(clsx(classNames.topFlap))}>
+          <span className={twMerge(clsx(classNames.font))}>
+            {animatedFlapQueue.length ? value : current}
+          </span>
         </div>
-        <style>
-          {`
+        <div className={twMerge(clsx(classNames.bottomFlap))}>
+          <span className={twMerge(clsx(classNames.font, "-translate-y-1/2"))}>
+            {animatedFlapQueue.length ? prev : current}
+          </span>
+        </div>
+      </div>
+      <style>
+        {`
               @keyframes flap-current {
                 0% {
                   transform: rotateX(0deg);
@@ -91,25 +102,17 @@ export default function SplitFlap({ list }: { list: string[] }) {
                 }
               }
             `}
-        </style>
-        {animatedFlapQueue.map((animatedFlap) => (
-          <SplitFlapAnimated
-            key={`${animatedFlap.current}-${animatedFlap.next}`}
-            animatedFlap={animatedFlap}
-            handleAnimationEnd={handleAnimationEnd}
-          />
-        ))}
-        <div className="opacity-0">
-          <div className="inline-block text-[100px] font-bold">{current}</div>
-        </div>
+      </style>
+      {animatedFlapQueue.map((animatedFlap) => (
+        <SplitFlapAnimated
+          key={animatedFlap.id}
+          animatedFlap={animatedFlap}
+          handleAnimationEnd={handleAnimationEnd}
+        />
+      ))}
+      <div className="opacity-0">
+        <div className="inline-block text-[100px] font-bold">{current}</div>
       </div>
-      <button
-        className="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white"
-        type="button"
-        onClick={handleClick}
-      >
-        Flap
-      </button>
-    </>
+    </div>
   );
 }

@@ -28,6 +28,8 @@ const eslintConfig = [
       "no-shadow": "off",
       "no-undef": "off",
       "react/no-array-index-key": "off",
+      "react/require-default-props": "off",
+      "react/jsx-props-no-spreading": "off",
     },
   },
 ];

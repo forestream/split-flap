@@ -1,18 +1,20 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import SplitFlap from "./SplitFlap";
 
 export default function Page() {
-  const inputQueue = useRef<string[]>(["a", "b", "c", "d", "e", "f", "g"]);
-  const [value, setValue] = useState("A");
+  const [value, setValue] = useState("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.slice(-1));
-    inputQueue.current.push(e.target.value.slice(-1));
+    setValue(e.target.value);
   };
   return (
     <div className="flex flex-col items-center gap-4">
-      <SplitFlap list={inputQueue.current} />
+      <div className="flex w-full flex-wrap gap-4">
+        {Array.from({ length: Math.max(3, value.length) }).map((_, index) => (
+          <SplitFlap key={index} value={value[index] || ""} />
+        ))}
+      </div>
       <input
         className="border"
         type="text"
