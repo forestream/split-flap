@@ -7,9 +7,6 @@ export default function Page() {
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [value, setValue] = useState("");
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
 
   useEffect(() => {
     interval.current = setInterval(() => {
@@ -34,12 +31,6 @@ export default function Page() {
           <SplitFlap key={index} value={value[index] || ""} />
         ))}
       </div>
-      <input
-        className="border"
-        type="text"
-        value={value}
-        onChange={handleChange}
-      />
     </div>
   );
 }

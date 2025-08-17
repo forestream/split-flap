@@ -1,10 +1,12 @@
 "use client";
 
-import clsx from "clsx";
 import { ComponentProps, useCallback, useState } from "react";
-import { twMerge } from "tailwind-merge";
 import { AnimatedFlap } from "@/types";
 import SplitFlapAnimated from "./SplitFlapAnimated";
+import SplitFlapStyle from "./_components/SplitFlapStyle";
+import SplitFlapContainer from "./_components/SplitFlapContainer";
+import SplitFlapStatic from "./_components/SplitFlapStatic";
+import SplitFlapHalf from "./_components/SplitFlapHalf";
 
 interface SplitFlapProps extends ComponentProps<"div"> {
   value?: string;
@@ -50,82 +52,46 @@ export default function SplitFlap({
   }
 
   return (
-    <div
-      aria-label="split flap container"
-      className={twMerge(
-        clsx("relative min-h-[100px] w-28 shadow-md", className),
-      )}
-      {...props}
-    >
-      <div
-        aria-label="split flap static"
-        className={twMerge(
-          clsx("absolute inset-0 z-0 h-full", animatedFlapQueue[0]),
-        )}
-      >
-        <div
-          aria-label="split flap flap"
-          className={twMerge(
-            clsx(
-              "absolute -top-0.5 flex h-1/2 w-full origin-bottom items-center justify-center overflow-hidden rounded bg-slate-900 text-white",
-            ),
-          )}
-        >
-          <span
-            className={twMerge(
-              clsx("inline-block translate-y-1/4 text-[100px] font-bold"),
-            )}
-          >
+    <SplitFlapContainer className={className} {...props}>
+      <SplitFlapStatic>
+        <SplitFlapHalf position="top">
+          <span className="inline-block translate-y-1/4 text-[100px] font-bold">
             {animatedFlapQueue.length ? value : current}
           </span>
-        </div>
-        <div
-          aria-label="split flap flap"
-          className={twMerge(
-            clsx(
-              "absolute -bottom-0.5 flex h-1/2 w-full origin-top items-center justify-center overflow-hidden rounded bg-slate-900 text-white",
-            ),
-          )}
-        >
-          <span
-            className={twMerge(
-              clsx("inline-block -translate-y-1/4 text-[100px] font-bold"),
-            )}
-          >
+        </SplitFlapHalf>
+        <SplitFlapHalf position="bottom">
+          <span className="inline-block -translate-y-1/4 text-[100px] font-bold">
             {animatedFlapQueue.length ? prev : current}
           </span>
-        </div>
-      </div>
-      <style>
-        {`
-              @keyframes flap-current {
-                0% {
-                  transform: rotateX(0deg);
-                }
-                100% {
-                  transform: rotateX(180deg);
-                }
-              }
-              @keyframes flap-next {
-                0% {
-                  transform: rotateX(-180deg);
-                }
-                100% {
-                  transform: rotateX(0deg);
-                }
-              }
-            `}
-      </style>
+        </SplitFlapHalf>
+      </SplitFlapStatic>
+      <SplitFlapStyle />
       {animatedFlapQueue.map((animatedFlap) => (
-        <SplitFlapAnimated
-          key={animatedFlap.id}
-          animatedFlap={animatedFlap}
-          handleAnimationEnd={handleAnimationEnd}
-        />
+        <SplitFlapAnimated key={animatedFlap.id}>
+          <SplitFlapHalf
+            position="top"
+            style={{ zIndex: animatedFlap.zIndex + 1000 }}
+            className="rotate-x-180 animate-[flap-current_.5s_ease-in-out] items-center justify-center overflow-hidden rounded bg-slate-900 text-white transition-transform duration-1000 backface-hidden"
+          >
+            <span className="inline-block translate-y-1/4 text-[100px] font-bold">
+              {animatedFlap.current}
+            </span>
+          </SplitFlapHalf>
+          <SplitFlapHalf
+            position="bottom"
+            style={{ zIndex: 1000 - animatedFlap.zIndex }}
+            className="rotate-x-0 animate-[flap-next_.5s_ease-in-out] items-center justify-center overflow-hidden rounded bg-slate-900 text-white transition-transform duration-1000 backface-hidden"
+            onAnimationEnd={handleAnimationEnd}
+          >
+            <span className="inline-block -translate-y-1/4 text-[100px] font-bold">
+              {animatedFlap.next}
+            </span>
+          </SplitFlapHalf>
+        </SplitFlapAnimated>
       ))}
       <div className="opacity-0">
         <div className="inline-block text-[100px] font-bold">{current}</div>
       </div>
-    </div>
+    </SplitFlapContainer>
   );
 }
