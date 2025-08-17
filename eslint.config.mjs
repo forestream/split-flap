@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintConfigPrettier from "eslint-config-prettier";
+import tseslint from "typescript-eslint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,6 +16,7 @@ const eslintConfig = [
   ...compat.config({
     extends: ["next/core-web-vitals", "next/typescript", "prettier", "airbnb"],
   }),
+  // tseslint.configs.recommended,
   eslintConfigPrettier,
   eslintPluginPrettier,
   {

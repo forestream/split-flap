@@ -3,8 +3,8 @@
 import clsx from "clsx";
 import { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
-// eslint-disable-next-line import/no-cycle
-import { useSplitFlap } from "@/app/SplitFlap";
+
+import { useSplitFlap } from "./SplitFlap";
 
 const positions = {
   top: "-top-0.5 origin-bottom",
