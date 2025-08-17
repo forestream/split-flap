@@ -21,8 +21,7 @@ export default function Page() {
     interval.current = setInterval(() => {
       const now = new Date();
       const locale = now.toLocaleTimeString();
-      const milliseconds = now.getMilliseconds();
-      setValue(`${locale}:${milliseconds.toString().padStart(3, "0")}`);
+      setValue(locale);
     }, 33);
 
     return () => {
@@ -56,7 +55,9 @@ export default function Page() {
                   <SplitFlapAnimatedContainer key={animatedFlap.id}>
                     <SplitFlapHalfAnimated
                       position="top"
-                      style={{ zIndex: animatedFlap.zIndex + 1000 }}
+                      style={{
+                        zIndex: animatedFlap.zIndex + 1000,
+                      }}
                     >
                       <SplitFlapSpan position="top">
                         {animatedFlap.current}
@@ -64,7 +65,9 @@ export default function Page() {
                     </SplitFlapHalfAnimated>
                     <SplitFlapHalfAnimated
                       position="bottom"
-                      style={{ zIndex: 1000 - animatedFlap.zIndex }}
+                      style={{
+                        zIndex: 1000 - animatedFlap.zIndex,
+                      }}
                     >
                       <SplitFlapSpan position="bottom">
                         {animatedFlap.next}
