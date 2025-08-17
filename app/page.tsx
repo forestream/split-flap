@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import SplitFlap from "./SplitFlap";
+import SplitFlapKeyframes from "./_components/SplitFlapKeyframes";
 
 export default function Page() {
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -15,7 +16,7 @@ export default function Page() {
       // const milliseconds = now.getMilliseconds();
       // setValue(`${locale}:${milliseconds.toString().padStart(3, "0")}`);
       setValue(locale);
-    }, 50);
+    }, 33);
 
     return () => {
       if (interval.current) {
@@ -27,6 +28,7 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-full flex-wrap justify-center gap-4">
+        <SplitFlapKeyframes />
         {Array.from({ length: Math.max(3, value.length) }).map((_, index) => (
           <SplitFlap key={index} value={value[index] || ""} />
         ))}

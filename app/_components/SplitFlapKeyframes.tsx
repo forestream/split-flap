@@ -1,4 +1,4 @@
-export default function SplitFlapStyle() {
+export default function SplitFlapKeyframes() {
   return (
     <style>
       {`
